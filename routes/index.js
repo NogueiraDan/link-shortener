@@ -2,6 +2,16 @@ const express = require("express");
 const router = express.Router();
 const Link = require("../models/link");
 
+const generateCode = () => {
+  var text = "";
+  const possible =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  for (let i = 0; i < 5; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+};
+
 router.get("/:code/stats", async (req, res, next) => {
   const code = req.params.code;
   const resultado = await Link.findOne({ where: { code } });
@@ -26,15 +36,7 @@ router.get("/", function (req, res, next) {
   res.render("index");
 });
 
-const generateCode = () => {
-  var text = "";
-  const possible =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  for (let i = 0; i < 5; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-};
+
 
 router.post("/new", async (req, res, next) => {
   const url = req.body.url;
@@ -44,7 +46,7 @@ router.post("/new", async (req, res, next) => {
     url,
     code,
   });
-  res.render("stats", result.dataValues);
+  res.redirect(`/${result.code}/stats`);
 });
 
 module.exports = router;
